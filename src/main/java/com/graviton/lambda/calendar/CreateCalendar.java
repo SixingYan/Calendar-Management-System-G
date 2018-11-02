@@ -9,7 +9,13 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 public class CreateCalendar implements RequestHandler<HashMap, HashMap> {
     @Override
     public HashMap handleRequest(HashMap request, Context context) {
-        //context.getLogger().log("Input: " + input);
+        //1. log 
+    	// context.getLogger().log("Input: " + input);
+    	
+    	//2. deal with input request
+    	// Void now.
+    	
+    	//3. generate output response
         HashMap<String, Object> respose = new HashMap<String, Object>();
         
         HashMap<String, Object> status = new HashMap<String, Object>();
