@@ -1,6 +1,7 @@
 package com.graviton.lambda.calendar;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -13,7 +14,7 @@ import com.amazonaws.services.lambda.runtime.Context;
  */
 public class CreateCalendarTest {
 
-    private static Object input;
+    private static HashMap input;
 
     @BeforeClass
     public static void createInput() throws IOException {
@@ -35,7 +36,7 @@ public class CreateCalendarTest {
         CreateCalendar handler = new CreateCalendar();
         Context ctx = createContext();
 
-        String output = handler.handleRequest(input, ctx);
+        HashMap output = handler.handleRequest(input, ctx);
 
         // TODO: validate output here if needed.
         Assert.assertEquals("Hello from Lambda!", output);
