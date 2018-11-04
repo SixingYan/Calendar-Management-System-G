@@ -1,6 +1,8 @@
 package com.graviton.lambda.calendar;
 
 import java.util.HashMap;
+import com.graviton.lambda.calendar.model.Calendar;
+import com.graviton.lambda.calendar.model.Status;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
@@ -9,7 +11,7 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
  */
 public class CreateCalendar implements RequestHandler<HashMap, HashMap> {
     @Override
-    public HashMap handleRequest(HashMap request, Context context) {
+    public HashMap handleRequest(HashMap Calendar, Context context) {
         //1. log 
     	// context.getLogger().log("Input: " + input);
     	
@@ -18,10 +20,7 @@ public class CreateCalendar implements RequestHandler<HashMap, HashMap> {
     	
     	//3. generate output response
         HashMap<String, Object> respose = new HashMap<String, Object>();
-        
-        HashMap<String, Object> status = new HashMap<String, Object>();
-        status.put("code", 0);
-        status.put("msg", "OK");
+        Status status = new Status(0, "OK");
         
         respose.put("status", status);
         respose.put("result", true);
