@@ -1,30 +1,38 @@
 package com.graviton.lambda.calendar;
 
-import java.util.HashMap;
-import com.graviton.lambda.calendar.model.Calendar;
-import com.graviton.lambda.calendar.model.Status;
-
+import java.io.*;
+import com.graviton.lambda.calendar.model.*;
+import org.json.*;
 import com.amazonaws.services.lambda.runtime.Context;
-import com.amazonaws.services.lambda.runtime.RequestHandler;
+import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
 /**
- * 需要相应的修改CreateCalendarTest里的代码，使其的input/output的类型对应上——这里是HashMap.
+ * 
  */
-public class CreateCalendar implements RequestHandler<HashMap, HashMap> {
-    @Override
-    public HashMap handleRequest(HashMap Calendar, Context context) {
+public class CreateCalendar implements RequestStreamHandler {
+    //@Override
+    public void handleRequest(InputStream inputStream, OutputStream outputStream, Context context) throws IOException {
         //1. log 
     	// context.getLogger().log("Input: " + input);
     	
     	//2. deal with input request
-    	// Void now.
+    	BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+    	JSONTokener parser = new JSONTokener(reader);
+    	JSONObject responseJSON = new JSONObject();
     	
-    	//3. generate output response
-        HashMap<String, Object> respose = new HashMap<String, Object>();
-        Status status = new Status(0, "OK");
+        JSONObject event = new JSONObject(parser);
         
-        respose.put("status", status);
-        respose.put("result", true);
-        return respose;
+        if (event.get("requestBody") != null) {
+        	JSONObject values = (JSONObject)event.get("requestBody");
+        	Calendar cld = new Calendar(values);
+        	// save calendar into database, now there is nothing
+        }
+        
+        //3. generate output response
+        Response response = new ResultResponse(true, new Status(0, "OK"));
+        
+        responseJSON.put("body", response);
+        OutputStreamWriter writer = new OutputStreamWriter(outputStream, "UTF-8");
+        writer.write(responseJSON.toString());  
+        writer.close();
     }
-
 }
