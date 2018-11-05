@@ -2,11 +2,16 @@ package com.graviton.lambda.calendar.model;
 
 import java.util.HashMap;
 
-public class DataResponse implements Response {
-	public Status status;
+public class DataResponse {
+	public int code;
+	public String message;
 	public HashMap data;
-	public DataResponse (Status status, HashMap data) {
-		this.status = status;
+	public DataResponse () {}
+	public DataResponse (HashMap data, int code, String message) {
+		this.code = code;
+		this.message = message;
 		this.data = data;
-	} 
+	}
+	
+	
 }

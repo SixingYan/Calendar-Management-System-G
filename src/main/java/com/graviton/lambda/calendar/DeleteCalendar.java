@@ -2,15 +2,12 @@ package com.graviton.lambda.calendar;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
+import com.graviton.lambda.calendar.model.*;
 
-public class DeleteCalendar implements RequestHandler<Object, String> {
+public class DeleteCalendar implements RequestHandler<SelectCalendar, ResultResponse> {
 
     @Override
-    public String handleRequest(Object input, Context context) {
-        context.getLogger().log("Input: " + input);
-
-        // TODO: implement your handler
-        return "Hello from Lambda!";
+    public ResultResponse handleRequest(SelectCalendar cld, Context context) {
+        return new ResultResponse(true, 0, "OK");
     }
-
 }

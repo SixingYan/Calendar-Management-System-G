@@ -3,25 +3,16 @@ package com.graviton.lambda.calendar.model;
 import org.json.*;
 
 public class Calendar {
-	private String name;
-	private int duration;
-	private int startDate;
-	private int endDate;
-	private int earlyTime;
-	private int lateTime;
+	public String name;
+	public int duration;
+	public int startDate;
+	public int endDate;
+	public int earlyTime;
+	public int lateTime;
 	
 	public Calendar () {}
 	
-	//public Calendar (JSONObject obj) {
-	//	setName((String)obj.get("name"));
-	//	setDuration((String)obj.get("duration"));
-	//	setEarlyTime((String)obj.get("earlyTime"));
-	//	setLateTime((String)obj.get("lateTime"));
-	//	setStartDate((String)obj.get("startDate"));
-	//	setEndDate((String)obj.get("endDate"));
-	//}
-	
-	public Calendar (String name, int duration, int startDate, int endDate, int earlyTime, int lateTime) {
+	public Calendar (String name, int duration, int earlyTime, int lateTime, int startDate, int endDate) {
 		this.name = name;
 		this.duration = duration;
 		this.startDate = startDate;
@@ -29,42 +20,53 @@ public class Calendar {
 		this.earlyTime = earlyTime;
 		this.lateTime = lateTime;
 	}
-	
+
 	public String getName() {
 		return name;
 	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
+
 	public int getDuration() {
 		return duration;
 	}
-	public void setDuration(String duration) {
-		this.duration = Integer.valueOf(duration);
+
+	public void setDuration(int duration) {
+		this.duration = duration;
 	}
+
 	public int getStartDate() {
 		return startDate;
 	}
-	public void setStartDate(String startDate) {
-		this.startDate = Integer.valueOf(startDate);
+
+	public void setStartDate(int startDate) {
+		this.startDate = startDate;
 	}
+
 	public int getEndDate() {
 		return endDate;
 	}
-	public void setEndDate(String endDate) {
-		this.endDate = Integer.valueOf(endDate);
+
+	public void setEndDate(int endDate) {
+		this.endDate = endDate;
 	}
+
 	public int getEarlyTime() {
 		return earlyTime;
 	}
-	public void setEarlyTime(String earlyTime) {
-		this.earlyTime = Integer.valueOf(earlyTime);
+
+	public void setEarlyTime(int earlyTime) {
+		this.earlyTime = earlyTime;
 	}
+
 	public int getLateTime() {
 		return lateTime;
 	}
-	public void setLateTime(String lateTime) {
-		this.lateTime = Integer.valueOf(lateTime);
+
+	public void setLateTime(int lateTime) {
+		this.lateTime = lateTime;
 	}
 	
 }
