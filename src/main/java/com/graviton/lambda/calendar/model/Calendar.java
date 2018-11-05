@@ -12,14 +12,14 @@ public class Calendar {
 	
 	public Calendar () {}
 	
-	public Calendar (JSONObject obj) {
-		setName((String)obj.get("name"));
-		setDuration((String)obj.get("duration"));
-		setEarlyTime((String)obj.get("earlyTime"));
-		setLateTime((String)obj.get("lateTime"));
-		setStartDate((String)obj.get("startDate"));
-		setEndDate((String)obj.get("endDate"));
-	}
+	//public Calendar (JSONObject obj) {
+	//	setName((String)obj.get("name"));
+	//	setDuration((String)obj.get("duration"));
+	//	setEarlyTime((String)obj.get("earlyTime"));
+	//	setLateTime((String)obj.get("lateTime"));
+	//	setStartDate((String)obj.get("startDate"));
+	//	setEndDate((String)obj.get("endDate"));
+	//}
 	
 	public Calendar (String name, int duration, int startDate, int endDate, int earlyTime, int lateTime) {
 		this.name = name;
