@@ -1,12 +1,11 @@
 package com.graviton.lambda.calendar;
 
 import java.util.HashMap;
-
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.graviton.lambda.calendar.model.*;
-public class LoadCalendar implements RequestHandler<SelectCalendar, DataResponse> {
 
+public class LoadCalendar implements RequestHandler<SelectCalendar, DataResponse> {
     @Override
     public DataResponse handleRequest(SelectCalendar cld, Context context) {
     	HashMap calendar = new HashMap();
@@ -19,5 +18,4 @@ public class LoadCalendar implements RequestHandler<SelectCalendar, DataResponse
     	
         return new DataResponse(calendar, 0, "OK");
     }
-
 }
