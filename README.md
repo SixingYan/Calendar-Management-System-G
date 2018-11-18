@@ -1,11 +1,11 @@
 # GravitonCalendar: Calendar Management System on AWS-Lambda
 
 >
-> **Authors:**
-> Gu, Xinmeng
-> Li, Yichen
-> Yan, Sixing (Jack)
-> Yuan, Xie
+> **Authors:**  
+> Gu, Xinmeng  
+> Li, Yichen  
+> Yan, Sixing (Jack)  
+> Yuan, Xie  
 
 ## Introduce 
 **GravitionCalendar** is a Java-based Calendar Management System project developed by Graviton Group. This is a course work of CS509Fall Design of Software Systems, given by Professor George Heineman. 
