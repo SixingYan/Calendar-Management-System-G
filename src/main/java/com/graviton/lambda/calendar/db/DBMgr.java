@@ -15,7 +15,13 @@ import org.bson.Document;
 import com.google.gson.*;
 import com.graviton.lambda.calendar.model.*;
 
-
+/**
+ * use as: com.graviton.lambda.calendar.db.DBMgr
+ * DBMgr db = new DBMgr();
+ * ArrayList<Calendar> calendars = db.doSAC(); // show all calendars
+ * @author Jack Sixing Yan
+ *
+ */
 public class DBMgr {
 	private static String URL = "localhost:27017";
 	private static String DATABASE = "cs509";
@@ -42,7 +48,14 @@ public class DBMgr {
 		this.mongoDatabase = mongoClient.getDatabase(DATABASE);
 		//this.collection = mongoDatabase.getCollection(COLLECTION);
 	}
-
+	/**
+	 * Show All Calendars
+	 * @return
+	 */
+	public ArrayList<Calendar> doSAC () {
+		return 
+	}
+	
 	/**
 	 * Create Personal Calendar
 	 * @return
