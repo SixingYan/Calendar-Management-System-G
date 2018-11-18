@@ -2,9 +2,8 @@ package com.graviton.lambda.calendar.db;
 
 import java.util.ArrayList;
 
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
-import com.mongodb.ConnectionString;
+import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
@@ -16,24 +15,29 @@ import com.google.gson.*;
 import com.graviton.lambda.calendar.model.*;
 
 /**
- * use as: com.graviton.lambda.calendar.db.DBMgr
+ * Use as,
+ * <code>
+ * import com.graviton.lambda.calendar.db.DBMgr;
  * DBMgr db = new DBMgr();
  * ArrayList<Calendar> calendars = db.doSAC(); // show all calendars
+ * </code>
+ * DBMgr only has one change to call any of functions,
+ * after calling, it will turn down the connection.
+ * This URL is a <B>free</B> test cluster provided by MongoDB using MongoDB Atlas.
  * @author Jack Sixing Yan
- *
  */
 public class DBMgr {
-	private static String URL = "localhost:27017";
+	private static String URL = "mongodb+srv://jack:jackmongodb@cluster0-uagde.mongodb.net/test?retryWrites=true";
 	private static String DATABASE = "cs509";
-
 	private static String CLD_CLX = "calendars";
 	private static String MT_CLX = "meetings";
 
 	private MongoCollection<Document> collection;
-	private Gson gson = new Gson(); // works for map to pojo
+	private Gson gson = new Gson(); // works for transfer map to pojo
 	private MongoCursor<Document> cursor;
 	private MongoDatabase mongoDatabase;
-
+	private MongoClient mongoClient;
+	
 	public DBMgr () {
 		initDB(URL, DATABASE);
 	}
@@ -43,19 +47,29 @@ public class DBMgr {
 	}
 
 	private void initDB (String url, String database) {
-		MongoClient mongoClient = MongoClients.create(new ConnectionString(url));
-
+		this.mongoClient = new MongoClient(new MongoClientURI(url));
 		this.mongoDatabase = mongoClient.getDatabase(DATABASE);
-		//this.collection = mongoDatabase.getCollection(COLLECTION);
 	}
 	/**
 	 * Show All Calendars
 	 * @return
 	 */
 	public ArrayList<Calendar> doSAC () {
-		return 
+		ArrayList<Calendar> pojoList = new ArrayList<Calendar>();
+
+		this.collection = this.mongoDatabase.getCollection(CLD_CLX);
+		this.cursor = collection.find().iterator();
+
+		while (this.cursor.hasNext()) {
+			Calendar pojo = this.gson.fromJson(cursor.next().toJson(), Calendar.class);
+			pojoList.add(pojo);
+		}
+		this.cursor.close();
+
+		this.mongoClient.close();
+		return pojoList;
 	}
-	
+
 	/**
 	 * Create Personal Calendar
 	 * @return
@@ -72,6 +86,7 @@ public class DBMgr {
 
 		this.collection.insertOne(document);
 
+		this.mongoClient.close();
 		return new ArrayList<Calendar>();
 	}
 
@@ -83,13 +98,12 @@ public class DBMgr {
 		ArrayList<Calendar> pojoList = new ArrayList<Calendar>();
 
 		this.collection = this.mongoDatabase.getCollection(CLD_CLX);
-		this.cursor = collection.find(Filters.eq("name", name)).iterator();
+		Document doc = collection.find(Filters.eq("name", name)).first();
 
-		while (this.cursor.hasNext()) {
-			Calendar pojo = this.gson.fromJson(cursor.next().toJson(), Calendar.class);
-			pojoList.add(pojo);
-		}
-
+		Calendar pojo = this.gson.fromJson(doc.toJson(), Calendar.class);
+		pojoList.add(pojo);
+		
+		this.mongoClient.close();
 		return pojoList;
 	}
 
@@ -110,7 +124,9 @@ public class DBMgr {
 			Meeting pojo = this.gson.fromJson(cursor.next().toJson(), Meeting.class);
 			pojoList.add(pojo);
 		}
+		this.cursor.close();
 
+		this.mongoClient.close();
 		return pojoList;
 	}
 
@@ -129,6 +145,7 @@ public class DBMgr {
 		this.collection = this.mongoDatabase.getCollection(MT_CLX);
 		this.collection.insertOne(document);
 
+		this.mongoClient.close();
 		return new ArrayList<Meeting>();
 	}
 
@@ -140,8 +157,9 @@ public class DBMgr {
 		ArrayList<Meeting> pojoList = new ArrayList<Meeting>();
 
 		this.collection = this.mongoDatabase.getCollection(MT_CLX);
-		this.cursor = collection.find(Filters.
-		                              eq("name", name)).
+		this.cursor = collection.find(
+		                  Filters.
+		                  eq("name", name)).
 		              eq("year", year).
 		              eq("month", month).
 		              iterator();
@@ -150,7 +168,9 @@ public class DBMgr {
 			Meeting pojo = this.gson.fromJson(cursor.next().toJson(), Meeting.class);
 			pojoList.add(pojo);
 		}
+		this.cursor.close();
 
+		this.mongoClient.close();
 		return pojoList;
 	}
 
@@ -169,6 +189,8 @@ public class DBMgr {
 	 */
 	public ArrayList<Calendar> doDPC (String name) {
 		this.collection.deleteOne(Filters.eq("name", name));
+
+		this.mongoClient.close();
 		return new ArrayList<Calendar>();
 	}
 
