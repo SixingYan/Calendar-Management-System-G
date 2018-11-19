@@ -1,5 +1,7 @@
 package com.graviton.lambda.calendar;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
@@ -16,6 +18,6 @@ public class LoadCalendar implements RequestHandler<SelectCalendar, DataResponse
     	calendar.put("startDate", 20180900);
     	calendar.put("endDate", 20181214);
     	
-        return new DataResponse(calendar, 0, "OK");
+        return new DataResponse(new ArrayList<HashMap>(Arrays.asList(calendar)), 0, "OK");
     }
 }
