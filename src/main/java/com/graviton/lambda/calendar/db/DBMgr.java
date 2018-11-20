@@ -159,9 +159,8 @@ public class DBMgr {
 		this.collection = this.mongoDatabase.getCollection(MT_CLX);
 		this.cursor = collection.find(
 		                  Filters.and(
-		                      Filters.eq("name", obj.name),
-		                      Filters.eq("year", obj.year),
-		                      Filters.eq("month", obj.month)))
+		                      Filters.gte("date", obj.year*10000 + obj.month*100),
+		                      Filters.lt("date", obj.year*10000 + (obj.month+1)*100)))
 		              .iterator();
 
 		while (this.cursor.hasNext()) {
@@ -179,6 +178,7 @@ public class DBMgr {
 	 * @return
 	 */
 	public ArrayList<Meeting> doCEM (SelectMeeting obj) {
+		this.collection = this.mongoDatabase.getCollection(MT_CLX);
 		this.collection.deleteOne(Filters.and(
 		                              Filters.eq("name", obj.name),
 		                              Filters.eq("date", obj.date),
@@ -191,6 +191,7 @@ public class DBMgr {
 	 * @return
 	 */
 	public ArrayList<Calendar> doDPC (String name) {
+		this.collection = this.mongoDatabase.getCollection(CLD_CLX);
 		this.collection.deleteOne(Filters.eq("name", name));
 
 		this.mongoClient.close();
