@@ -7,18 +7,20 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.amazonaws.services.lambda.runtime.Context;
+import com.graviton.lambda.calendar.model.ResultResponse;
+import com.graviton.lambda.calendar.model.SelectCalendar;
 
 /**
  * A simple test harness for locally invoking your Lambda function handler.
  */
 public class DeleteCalendarTest {
 
-    private static Object input;
+    private static SelectCalendar input;
 
     @BeforeClass
     public static void createInput() throws IOException {
         // TODO: set up your sample input object here.
-        input = null;
+    	input = new SelectCalendar("personal");
     }
 
     private Context createContext() {
@@ -35,9 +37,9 @@ public class DeleteCalendarTest {
         DeleteCalendar handler = new DeleteCalendar();
         Context ctx = createContext();
 
-        String output = handler.handleRequest(input, ctx);
+        ResultResponse output = handler.handleRequest(input, ctx);
 
         // TODO: validate output here if needed.
-        Assert.assertEquals("Hello from Lambda!", output);
+        //Assert.assertEquals("Hello from Lambda!", output);
     }
 }
