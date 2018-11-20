@@ -15,7 +15,9 @@ public class DeleteCalendar implements RequestHandler<SelectCalendar, ResultResp
     	DBMgr db=new DBMgr();
     	
     	String name=cld.getName();
+    	
     	ArrayList<Calendar> result = db.doDPC(name);
+    	
     	if (result.getClass()==ArrayList.class) {
     		return new ResultResponse(true, 0, "OK");
     	}else {
