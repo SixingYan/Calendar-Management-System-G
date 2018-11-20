@@ -37,7 +37,7 @@ public class DBMgr {
 	private MongoCursor<Document> cursor;
 	private MongoDatabase mongoDatabase;
 	private MongoClient mongoClient;
-	
+
 	public DBMgr () {
 		initDB(URL, DATABASE);
 	}
@@ -80,8 +80,8 @@ public class DBMgr {
 		Document document = new Document("name", cld.name).
 		append("startDate", cld.startDate).
 		append("endDate", cld.endDate).
-		append("startTime", cld.earlyTime).
-		append("endTime", cld.lateTime).
+		append("earlyTime", cld.earlyTime).
+		append("lateTime", cld.lateTime).
 		append("duration", cld.duration);
 
 		this.collection.insertOne(document);
@@ -102,7 +102,7 @@ public class DBMgr {
 
 		Calendar pojo = this.gson.fromJson(doc.toJson(), Calendar.class);
 		pojoList.add(pojo);
-		
+
 		this.mongoClient.close();
 		return pojoList;
 	}
@@ -111,13 +111,13 @@ public class DBMgr {
 	 * Show Daily Schedule
 	 * @return
 	 */
-	public ArrayList<Meeting> doSDS () {
+	public ArrayList<Meeting> doSDS (PresentCalendarDaily obj) {
 		ArrayList<Meeting> pojoList = new ArrayList<Meeting>();
 
 		this.collection = this.mongoDatabase.getCollection(MT_CLX);
-		this.cursor = collection.find(Filters.
-		                              eq("name", name)).
-		              eq("date", date).
+		this.cursor = collection.find(Filters.and(
+		                                  Filters.eq("name", obj.name),
+		                                  Filters.eq("date", obj.date))).
 		              iterator();
 
 		while (this.cursor.hasNext()) {
@@ -153,16 +153,16 @@ public class DBMgr {
 	 * Show Monthly Schedule
 	 * @return
 	 */
-	public ArrayList<Meeting> doSMS () {
+	public ArrayList<Meeting> doSMS (PresentCalendarMonthly obj) {
 		ArrayList<Meeting> pojoList = new ArrayList<Meeting>();
 
 		this.collection = this.mongoDatabase.getCollection(MT_CLX);
 		this.cursor = collection.find(
-		                  Filters.
-		                  eq("name", name)).
-		              eq("year", year).
-		              eq("month", month).
-		              iterator();
+		                  Filters.and(
+		                      Filters.eq("name", obj.name),
+		                      Filters.eq("year", obj.year),
+		                      Filters.eq("month", obj.month)))
+		              .iterator();
 
 		while (this.cursor.hasNext()) {
 			Meeting pojo = this.gson.fromJson(cursor.next().toJson(), Meeting.class);
@@ -178,8 +178,11 @@ public class DBMgr {
 	 * Close Existing Meeting
 	 * @return
 	 */
-	public ArrayList<Meeting> doCEM () {
-		this.collection.deleteOne(Filters.eq("name", name).eq("date", date).eq("time", time));
+	public ArrayList<Meeting> doCEM (SelectMeeting obj) {
+		this.collection.deleteOne(Filters.and(
+		                              Filters.eq("name", obj.name),
+		                              Filters.eq("date", obj.date),
+		                              Filters.eq("time", obj.time)));
 		return new ArrayList<Meeting>();
 	}
 
