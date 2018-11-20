@@ -1,7 +1,11 @@
 package com.graviton.lambda.calendar.model;
 
 import org.json.*;
-
+/**
+ * 
+ * @author Sixing Yan
+ *
+ */
 public class Calendar {
 	public String name;
 	public int duration;
