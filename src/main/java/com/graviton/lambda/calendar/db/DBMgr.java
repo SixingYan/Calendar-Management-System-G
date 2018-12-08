@@ -27,67 +27,37 @@ import com.graviton.lambda.calendar.model.*;
  * @author Jack Sixing Yan
  */
 public class DBMgr {
-	private static String URL = "mongodb+srv://jack:jackmongodb@cluster0-uagde.mongodb.net/test?retryWrites=true";
-	private static String DATABASE = "cs509";
-	private static String CLD_CLX = "calendars";
-	private static String MT_CLX = "meetings";
+	private DAO dao;
 
 	private MongoCollection<Document> collection;
+
 	private Gson gson = new Gson(); // works for transfer map to pojo
 	private MongoCursor<Document> cursor;
 	private MongoDatabase mongoDatabase;
 	private MongoClient mongoClient;
 
 	public DBMgr () {
-		initDB(URL, DATABASE);
+		this.dao = new DAO();
 	}
 
 	public DBMgr (String url, String database) {
-		initDB(url, database);
+		this.dao = new DAO(url, database);
 	}
 
-	private void initDB (String url, String database) {
-		this.mongoClient = new MongoClient(new MongoClientURI(url));
-		this.mongoDatabase = mongoClient.getDatabase(DATABASE);
-	}
 	/**
 	 * Show All Calendars
 	 * @return
 	 */
 	public ArrayList<Calendar> doSAC () {
-		ArrayList<Calendar> pojoList = new ArrayList<Calendar>();
-
-		this.collection = this.mongoDatabase.getCollection(CLD_CLX);
-		this.cursor = collection.find().iterator();
-
-		while (this.cursor.hasNext()) {
-			Calendar pojo = this.gson.fromJson(cursor.next().toJson(), Calendar.class);
-			pojoList.add(pojo);
-		}
-		this.cursor.close();
-
-		this.mongoClient.close();
-		return pojoList;
+		return dao.findCalendars();
 	}
 
 	/**
 	 * Create Personal Calendar
 	 * @return
 	 */
-	public ArrayList<Calendar> doCPC (Calendar cld) {
-		this.collection = this.mongoDatabase.getCollection(CLD_CLX);
-
-		Document document = new Document("name", cld.name).
-		append("startDate", cld.startDate).
-		append("endDate", cld.endDate).
-		append("earlyTime", cld.earlyTime).
-		append("lateTime", cld.lateTime).
-		append("duration", cld.duration);
-
-		this.collection.insertOne(document);
-
-		this.mongoClient.close();
-		return new ArrayList<Calendar>();
+	public boolean doCPC (Calendar cld) {
+		return dao.addCalendar(cld.name, cld.startDate, cld.endDate, cld.earlyTime, cld.lateTime, cld.duration);
 	}
 
 	/**
@@ -95,16 +65,7 @@ public class DBMgr {
 	 * @return
 	 */
 	public ArrayList<Calendar> doLPC (String name) {
-		ArrayList<Calendar> pojoList = new ArrayList<Calendar>();
-
-		this.collection = this.mongoDatabase.getCollection(CLD_CLX);
-		Document doc = collection.find(Filters.eq("name", name)).first();
-
-		Calendar pojo = this.gson.fromJson(doc.toJson(), Calendar.class);
-		pojoList.add(pojo);
-
-		this.mongoClient.close();
-		return pojoList;
+		return dao.findCalendar(name);
 	}
 
 	/**
@@ -112,41 +73,7 @@ public class DBMgr {
 	 * @return
 	 */
 	public ArrayList<Meeting> doSDS (PresentCalendarDaily obj) {
-		ArrayList<Meeting> pojoList = new ArrayList<Meeting>();
-
-		this.collection = this.mongoDatabase.getCollection(MT_CLX);
-		this.cursor = collection.find(Filters.and(
-		                                  Filters.eq("name", obj.name),
-		                                  Filters.eq("date", obj.date))).
-		              iterator();
-
-		while (this.cursor.hasNext()) {
-			Meeting pojo = this.gson.fromJson(cursor.next().toJson(), Meeting.class);
-			pojoList.add(pojo);
-		}
-		this.cursor.close();
-
-		this.mongoClient.close();
-		return pojoList;
-	}
-
-	/**
-	 * Schedule Meeting
-	 * @return
-	 */
-	public ArrayList<Meeting> doSM (Meeting mt) {
-
-		Document document = new Document("name", mt.name).
-		append("date", mt.date).
-		append("time", mt.time).
-		append("people", mt.people).
-		append("location", mt.location);
-
-		this.collection = this.mongoDatabase.getCollection(MT_CLX);
-		this.collection.insertOne(document);
-
-		this.mongoClient.close();
-		return new ArrayList<Meeting>();
+		return dao.findMeetings(obj.name, obj.date);
 	}
 
 	/**
@@ -154,23 +81,49 @@ public class DBMgr {
 	 * @return
 	 */
 	public ArrayList<Meeting> doSMS (PresentCalendarMonthly obj) {
-		ArrayList<Meeting> pojoList = new ArrayList<Meeting>();
+		return dao.findMeetings(obj.name, obj.year, obj.month);
+	}
 
-		this.collection = this.mongoDatabase.getCollection(MT_CLX);
-		this.cursor = collection.find(
-		                  Filters.and(
-		                      Filters.gte("date", obj.year*10000 + obj.month*100),
-		                      Filters.lt("date", obj.year*10000 + (obj.month+1)*100)))
-		              .iterator();
+	/**
+	 * Schedule Meeting
+	 * @return
+	 */
+	public boolean doSM (Meeting mt) {
+		
+		if (dao.findCalendar(mt.name).isEmpty())
+			return false;
+		else
+			Calendar c = dao.findCalendar(mt.name).get(0);
 
-		while (this.cursor.hasNext()) {
-			Meeting pojo = this.gson.fromJson(cursor.next().toJson(), Meeting.class);
-			pojoList.add(pojo);
+		if (c.removeDay.contains(mt.date))
+			return false;
+		
+		boolean isAllowed = true;
+		ArrayList<TimeSlot> closedTS = dao.findClosedTimeSlot(mt.name);
+
+		java.util.Calendar cld = java.util.Calendar.getInstance();
+        try {
+            Date datet = new SimpleDateFormat("yyyyMMdd").parse(String.valueOf(mt.date));
+            cld.setTime(datet);
+        } catch (ParseException e) {
+            return false;
+        }
+        int dow = cld.get(Calendar.DAY_OF_WEEK) - 1; // 指示一个星期中的某天。
+        if (dow < 0)
+            dow = 7;
+
+		for (TimeSlot ts : closedTS) {
+			//check date
+			if (ts.startDate )
+
+			// chcek dow
+
+			// check time
+
 		}
-		this.cursor.close();
 
-		this.mongoClient.close();
-		return pojoList;
+		this.dao.addMeeting(mt.name, mt.date, mt.time, mt.people, mt.location);
+		return true;
 	}
 
 	/**
@@ -178,24 +131,74 @@ public class DBMgr {
 	 * @return
 	 */
 	public ArrayList<Meeting> doCEM (SelectMeeting obj) {
-		this.collection = this.mongoDatabase.getCollection(MT_CLX);
-		this.collection.deleteOne(Filters.and(
-		                              Filters.eq("name", obj.name),
-		                              Filters.eq("date", obj.date),
-		                              Filters.eq("time", obj.time)));
-		return new ArrayList<Meeting>();
+		this.dao.deleteMeeting(obj.name, obj.date, obj.time);
+		return true;
 	}
 
 	/**
 	 * Delete Personal Calendar
 	 * @return
 	 */
-	public ArrayList<Calendar> doDPC (String name) {
-		this.collection = this.mongoDatabase.getCollection(CLD_CLX);
-		this.collection.deleteOne(Filters.eq("name", name));
-
-		this.mongoClient.close();
-		return new ArrayList<Calendar>();
+	public boolean doDPC (String name) {
+		this.dao.deleteCalendar(name);
+		return true;
 	}
 
+	/**
+	 * Add Day
+	 * @return
+	 */
+	public boolean doADC (String name, int date) {
+		Calendar c = dao.findCalendar().get(0);
+		if (c.removeDay.contains(date))
+			c.removeDay.remove(date);
+		if (!c.addDay.contains(date))
+			c.addDay.add(date);
+
+		this.dao.updateCalendar(name, c.addDay, null);
+		this.dao.updateCalendar(name, null, c.removeDay);
+
+		return true;
+	}
+
+	/**
+	 * Remove Day
+	 * @return
+	 */
+	public boolean doRDC (String name, int date) {
+		Calendar c = dao.findCalendar().get(0);
+		if (!c.removeDay.contains(date))
+			c.removeDay.add(date);
+		if (c.addDay.contains(date))
+			c.addDay.remove(date);
+
+		this.dao.updateCalendar(name, c.addDay, null);
+		this.dao.updateCalendar(name, null, c.removeDay);
+
+		return true;
+	}
+
+	/**
+	 * Close TimeSlot.
+	 * @return
+	 */
+	public boolean doCT (String name, int fromMonth, int toMonth, int fromDay, int toDay, int dow, int fromTime, int toTime) {
+
+		// check whether it exist
+		if (this.dao.findCalendar(name).isEmpty() == null)
+			return false;
+		//
+		this.dao.addClosedTimeSlot(name, fromMonth, toMonth, fromDay, toDay, dow, fromTime, toTime);
+
+		return true;
+	}
+
+	/**
+	 * Close Exist Meeting
+	 * @return
+	 */
+	public boolean doCEM (String name, int date, int time) {
+		this.dao.deleteMeeting(name, date, time);
+		return true;
+	}
 }
