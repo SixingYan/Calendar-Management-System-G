@@ -1,7 +1,5 @@
 package com.graviton.lambda.calendar;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import com.graviton.lambda.calendar.db.DBMgr;
 
 import com.amazonaws.services.lambda.runtime.Context;
@@ -14,9 +12,7 @@ public class CancelMeeting implements RequestHandler<SelectMeeting, ResultRespon
     	
     	DBMgr db = new DBMgr();
     	
-    	ArrayList result = db.doCEM(sm);
-    	
-    	if (result.getClass() == ArrayList.class) {
+    	if (db.doCEM(sm)) {
     		return new ResultResponse(true, 0, "OK");
     	} else {
     		return new ResultResponse(false, -1, "error");

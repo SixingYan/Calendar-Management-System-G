@@ -1,10 +1,10 @@
 package com.graviton.lambda.calendar.model;
 
-import org.json.*;
+import java.util.ArrayList;
+
 /**
  * 
  * @author Sixing Yan
- *
  */
 public class Calendar {
 	public String name;
@@ -13,7 +13,10 @@ public class Calendar {
 	public int endDate;
 	public int earlyTime;
 	public int lateTime;
-	
+	public ArrayList<Integer> addDay;
+	public ArrayList<Integer> removeDay;
+
+
 	public Calendar () {}
 	
 	public Calendar (String name, int duration, int earlyTime, int lateTime, int startDate, int endDate) {
@@ -23,6 +26,17 @@ public class Calendar {
 		this.endDate = endDate;
 		this.earlyTime = earlyTime;
 		this.lateTime = lateTime;
+	}
+
+	public Calendar (String name, int duration, int earlyTime, int lateTime, int startDate, int endDate, ArrayList<Integer> addDay,ArrayList<Integer> removeDay) {
+		this.name = name;
+		this.duration = duration;
+		this.startDate = startDate;
+		this.endDate = endDate;
+		this.earlyTime = earlyTime;
+		this.lateTime = lateTime;
+		this.addDay = addDay;
+		this.removeDay = removeDay;
 	}
 
 	public String getName() {
@@ -71,6 +85,22 @@ public class Calendar {
 
 	public void setLateTime(int lateTime) {
 		this.lateTime = lateTime;
+	}
+
+	public ArrayList<Integer> getAddDay() {
+		return addDay;
+	}
+
+	public void setAddDay(ArrayList<Integer> addDay) {
+		this.addDay = addDay;
+	}
+	
+	public ArrayList<Integer> getRemoveDay() {
+		return removeDay;
+	}
+
+	public void setRemoveDay(ArrayList<Integer> removeDay) {
+		this.removeDay = removeDay;
 	}
 	
 }
