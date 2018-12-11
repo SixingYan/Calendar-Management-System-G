@@ -35,7 +35,9 @@ public class DBMgr {
 	 * @return
 	 */
 	public ArrayList<Calendar> doSAC () {
-		return dao.findCalendars();
+		ArrayList<Calendar> m = dao.findCalendars();
+		this.dao.close();
+		return m;
 	}
 
 	/**
@@ -44,6 +46,7 @@ public class DBMgr {
 	 */
 	public boolean doCPC (Calendar cld) {
 		dao.addCalendar(cld.name, cld.startDate, cld.endDate, cld.earlyTime, cld.lateTime, cld.duration);
+		this.dao.close();
 		return true;
 	}
 
@@ -52,7 +55,9 @@ public class DBMgr {
 	 * @return
 	 */
 	public ArrayList<Calendar> doLPC (String name) {
-		return dao.findCalendar(name);
+		ArrayList<Calendar> m = dao.findCalendar(name);
+		this.dao.close();
+		return m;
 	}
 
 	/**
@@ -60,7 +65,9 @@ public class DBMgr {
 	 * @return
 	 */
 	public ArrayList<Meeting> doSDS (PresentCalendarDaily obj) {
-		return dao.findMeetings(obj.name, obj.date);
+		ArrayList<Meeting> ms = dao.findMeetings(obj.name, obj.date);
+		this.dao.close();
+		return ms;
 	}
 
 	/**
@@ -68,7 +75,9 @@ public class DBMgr {
 	 * @return
 	 */
 	public ArrayList<Meeting> doSMS (PresentCalendarMonthly obj) {
-		return dao.findMeetings(obj.name, obj.year, obj.month);
+		ArrayList<Meeting> ms = dao.findMeetings(obj.name, obj.year, obj.month);
+		this.dao.close();
+		return ms;
 	}
 
 	/**
@@ -96,6 +105,7 @@ public class DBMgr {
 				return false;
 		// add it 
 		this.dao.addMeeting(mt.name, mt.date, mt.time, mt.people, mt.location);
+		this.dao.close();
 		return true;
 	}
 	
@@ -165,6 +175,7 @@ public class DBMgr {
 	 */
 	public boolean doCEM (SelectMeeting obj) {
 		this.dao.deleteMeeting(obj.name, obj.date, obj.time);
+		this.dao.close();
 		return true;
 	}
 
@@ -174,6 +185,7 @@ public class DBMgr {
 	 */
 	public boolean doDPC (String name) {
 		this.dao.deleteCalendar(name);
+		this.dao.close();
 		return true;
 	}
 
@@ -187,10 +199,9 @@ public class DBMgr {
 			c.removeDay.remove(date);
 		if (!c.addDay.contains(date))
 			c.addDay.add(date);
-
 		this.dao.updateCalendar(name, c.addDay, null);
 		this.dao.updateCalendar(name, null, c.removeDay);
-
+		this.dao.close();
 		return true;
 	}
 
@@ -207,7 +218,7 @@ public class DBMgr {
 
 		this.dao.updateCalendar(name, c.addDay, null);
 		this.dao.updateCalendar(name, null, c.removeDay);
-
+		this.dao.close();
 		return true;
 	}
 
@@ -221,7 +232,7 @@ public class DBMgr {
 			return false;
 		// 
 		this.dao.addClosedTimeSlot(name, date, dow, fromTime, toTime);
-
+		this.dao.close();
 		return true;
 	}
 
@@ -231,6 +242,7 @@ public class DBMgr {
 	 */
 	public boolean doCEM (String name, int date, int time) {
 		this.dao.deleteMeeting(name, date, time);
+		this.dao.close();
 		return true;
 	}
 }

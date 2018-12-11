@@ -43,7 +43,9 @@ public class DAO {
 		this.mongoClient = new MongoClient(new MongoClientURI(url));
 		this.mongoDatabase = mongoClient.getDatabase(DATABASE);
 	}
-
+	public void close() {
+		this.mongoClient.close();
+	}
 // calendar
 	public ArrayList<Calendar> findCalendar (String name) {
 		ArrayList<Calendar> pojoList = new ArrayList<Calendar>();
@@ -53,8 +55,6 @@ public class DAO {
 
 		Calendar pojo = this.gson.fromJson(doc.toJson(), Calendar.class);
 		pojoList.add(pojo);
-
-		this.mongoClient.close();
 		return pojoList;
 	}
 
@@ -69,7 +69,6 @@ public class DAO {
 			pojoList.add(pojo);
 		}
 		this.cursor.close();
-		this.mongoClient.close();
 		return pojoList;
 	}
 
@@ -81,15 +80,14 @@ public class DAO {
 		append("endDate", endDate).
 		append("earlyTime", earlyTime).
 		append("lateTime", lateTime).
-		append("duration", duration);
-
+		append("duration", duration).
+		append("addDay", new ArrayList<Integer>()).
+		append("removeDay", new ArrayList<Integer>());
 		this.collection.insertOne(document);
-		this.mongoClient.close();
 	}
 
 	public void updateCalendar (String name, ArrayList<Integer> addDay, ArrayList<Integer> removeDay) {
 		
-
 		if (addDay != null)
 			this.collection.updateOne(Filters.eq("name", name), Updates.set("addDay", addDay));
 
@@ -100,7 +98,6 @@ public class DAO {
 	public void deleteCalendar (String name) {
 		this.collection = this.mongoDatabase.getCollection(CLD_CLX);
 		this.collection.deleteOne(Filters.eq("name", name));
-		this.mongoClient.close();
 	}
 
 
@@ -120,8 +117,6 @@ public class DAO {
 			pojoList.add(pojo);
 		}
 		this.cursor.close();
-
-		this.mongoClient.close();
 		return pojoList;
 	}
 	public ArrayList<Meeting> findMeetings (String name, int year, int month) {
@@ -139,8 +134,6 @@ public class DAO {
 			pojoList.add(pojo);
 		}
 		this.cursor.close();
-
-		this.mongoClient.close();
 		return pojoList;
 	}
 
@@ -153,9 +146,6 @@ public class DAO {
 
 		this.collection = this.mongoDatabase.getCollection(MT_CLX);
 		this.collection.insertOne(document);
-
-		this.mongoClient.close();
-
 	}
 
 	public void deleteMeeting (String name, int date, int time) {
@@ -164,7 +154,6 @@ public class DAO {
 		                              Filters.eq("name", name),
 		                              Filters.eq("date", date),
 		                              Filters.eq("time", time)));
-		this.mongoClient.close();
 	}
 
 // closed time slot
@@ -175,8 +164,6 @@ public class DAO {
 
 		TimeSlot pojo = this.gson.fromJson(doc.toJson(), TimeSlot.class);
 		pojoList.add(pojo);
-
-		this.mongoClient.close();
 		return pojoList;
 	}
 
@@ -198,8 +185,5 @@ public class DAO {
 
 		this.collection = this.mongoDatabase.getCollection(CTS_CLX);
 		this.collection.insertOne(document);
-
-		this.mongoClient.close();
 	}
-
 }
