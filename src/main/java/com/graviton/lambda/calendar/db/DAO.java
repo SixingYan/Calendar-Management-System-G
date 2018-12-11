@@ -180,14 +180,11 @@ public class DAO {
 		return pojoList;
 	}
 
-	public void addClosedTimeSlot (String name, int fromMonth, int toMonth, int fromDay, int toDay, int dow, int fromTime, int toTime) {
+	public void addClosedTimeSlot (String name, int date, int dow, int fromTime, int toTime) {
 		Document document = new Document("name", name);
 
-		if (fromMonth != -1 & toMonth != -1 & fromDay != -1 & toDay != -1 ) {
-			document.append("fromMonth", fromMonth).
-			append("toMonth", toMonth).
-			append("fromDay", fromDay).
-			append("toDay", toDay);
+		if (date != -1) {
+			document.append("date", date);
 		}
 
 		if (dow != -1) {

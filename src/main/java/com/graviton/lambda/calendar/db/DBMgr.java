@@ -100,14 +100,14 @@ public class DBMgr {
 	}
 	
 	private boolean isAllowed (TimeSlot cts, Meeting mt) {
-		if (!isNull(cts.fromDate) & !isNull(cts.toDate)) {
+		if (!isNull(cts.date)) {
 			if (!isNull(cts.fromTime) & !isNull(cts.toTime))
 				if (!isNull(cts.dow))
-					return !(inDate(cts.fromDate, cts.toDate, mt.date) & inTime(cts.fromTime,cts.toTime, mt.time) & inDow(cts.dow, mt.date));
+					return !(inDate(cts.date, mt.date) & inTime(cts.fromTime,cts.toTime, mt.time) & inDow(cts.dow, mt.date));
 				else
-					return !(inDate(cts.fromDate, cts.toDate, mt.date) & inTime(cts.fromTime,cts.toTime, mt.time));
+					return !(inDate(cts.date, mt.date) & inTime(cts.fromTime,cts.toTime, mt.time));
 			else
-				return !inDate(cts.fromDate, cts.toDate, mt.date);
+				return !inDate(cts.date, mt.date);
 			}
 		else {
 			if (!isNull(cts.fromTime) & !isNull(cts.toTime))
@@ -119,20 +119,25 @@ public class DBMgr {
 				return !inDow(cts.dow, mt.date);
 		}
 	}
-	private boolean inDate (int fromDate, int toDate, int date) {
-		if (!isNull(fromDate) & !isNull(toDate))
-			if (fromDate <= date & toDate >= date)
+	private boolean inDate (int cdate, int date) {
+		if (cdate == date)
 				return true;
 		return false;
 	}
+	
+	private boolean inDate (int fromDate, int toDate, int date) {
+		if (fromDate <= date & toDate >= date)
+			return true;
+		return false;
+	}
+	
 	private boolean isNull (int val) {
 		return val == -1;
 	}
 	
 	private boolean inTime(int fromTime, int toTime, int time) {
-		if (!isNull(fromTime) & !isNull(toTime))
-			if (fromTime <= time & toTime >= time)
-				return true;
+		if (fromTime <= time & toTime >= time)
+			return true;
 		return false;
 	}
 	
@@ -210,12 +215,12 @@ public class DBMgr {
 	 * Close TimeSlot.
 	 * @return
 	 */
-	public boolean doCT (String name, int fromMonth, int toMonth, int fromDay, int toDay, int dow, int fromTime, int toTime) {
+	public boolean doCT (String name, int date, int dow, int fromTime, int toTime) {
 		// check whether it exist
 		if (this.dao.findCalendar(name).isEmpty())
 			return false;
 		// 
-		this.dao.addClosedTimeSlot(name, fromMonth, toMonth, fromDay, toDay, dow, fromTime, toTime);
+		this.dao.addClosedTimeSlot(name, date, dow, fromTime, toTime);
 
 		return true;
 	}

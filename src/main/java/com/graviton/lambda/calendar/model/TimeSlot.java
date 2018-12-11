@@ -2,8 +2,7 @@ package com.graviton.lambda.calendar.model;
 
 public class TimeSlot {
 	public String name;
-	public int fromDate;
-	public int toDate;
+	public int date;
 	public int dow;
 	public int fromTime;
 	public int toTime;
@@ -16,17 +15,12 @@ public class TimeSlot {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public int getFromDate() {
-		return fromDate;
+	
+	public int getDate() {
+		return date;
 	}
-	public void setFromDate(int fromDate) {
-		this.fromDate = fromDate;
-	}
-	public int getToDate() {
-		return toDate;
-	}
-	public void setToDate(int toDate) {
-		this.toDate = toDate;
+	public void setDate(int date) {
+		this.date = date;
 	}
 	public int getDow() {
 		return dow;

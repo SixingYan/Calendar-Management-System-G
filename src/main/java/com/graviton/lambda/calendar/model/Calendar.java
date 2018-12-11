@@ -16,7 +16,6 @@ public class Calendar {
 	public ArrayList<Integer> addDay;
 	public ArrayList<Integer> removeDay;
 
-
 	public Calendar () {}
 	
 	public Calendar (String name, int duration, int earlyTime, int lateTime, int startDate, int endDate) {
